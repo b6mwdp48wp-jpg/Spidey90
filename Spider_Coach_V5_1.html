@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spider Coach">
+<title>Spider Coach</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f4f6;color:#111827;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{max-width:620px;margin:auto;padding:14px 14px 48px}.hero{background:#111827;color:#fff;border-radius:24px;padding:20px;margin-bottom:12px}
+.hero h1{margin:4px 0;font-size:29px}.muted{color:#6b7280;font-size:13px}.hero .muted{color:#cbd5e1}
+nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+button{border:0;border-radius:12px;padding:11px 12px;font-weight:750;background:#fff;color:#111827;box-shadow:0 1px 3px #0001}
+.active{background:#111827;color:#fff}.tabs{display:flex;gap:7px;overflow:auto;margin:3px 0 9px}.tabs button{white-space:nowrap}
+.card{background:#fff;border-radius:20px;padding:16px;margin:10px 0;box-shadow:0 2px 12px #0000000b}
+h2{font-size:18px;margin:0 0 4px}.ex{border-top:1px solid #e5e7eb;padding:14px 0}.ex:first-child{border-top:0}
+.exrow{display:flex;justify-content:space-between;gap:10px}.name{font-weight:800}.sets{font-size:13px;color:#6b7280;margin-top:3px}.tip{font-size:12px;color:#4b5563;margin-top:5px}
+.check{width:42px;height:42px;padding:0;border-radius:50%;font-size:18px}.done{background:#16a34a;color:#fff}
+.inputs{display:flex;gap:7px;margin-top:8px}.inputs input{width:100%;padding:9px;border:1px solid #ddd;border-radius:10px;font:inherit}
+.progress{height:9px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin-top:10px}.bar{height:100%;background:#16a34a}
+.big{width:100%;background:#111827;color:#fff;margin-top:10px}.timer{text-align:center;font-size:46px;font-weight:850;margin:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:#f9fafb;border-radius:14px;padding:12px;margin:5px 0}
+.danger{background:#fee2e2;color:#991b1b}.small{font-size:12px;color:#6b7280}.smallbtn{margin-top:7px;padding:7px 9px;font-size:12px;background:#f3f4f6;box-shadow:none}
+
+.chart{display:flex;align-items:end;gap:6px;height:110px;padding:12px 0}
+.chart div{flex:1;min-width:8px;background:#111827;border-radius:5px 5px 2px 2px}
+.hero{text-align:center;padding:12px 4px 18px}
+.hero h1{font-size:32px;margin:4px 0}
+.hero p{margin:4px 0;color:#6b7280}
+.badge{font-size:42px}
+.big{width:100%;margin:6px 0}
+.smallbtn{margin-top:7px;padding:7px 9px;font-size:12px;background:#f3f4f6;box-shadow:none}
+.stat{padding:10px 0;border-bottom:1px solid #e5e7eb}
+.stat:last-child{border-bottom:0}
+.danger{background:#fee2e2;color:#991b1b;margin-top:10px}
+
+
+
+.visualHero{margin:10px 0 12px;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px #0002}
+.visualHero img{display:block;width:100%;height:auto}
+.sectionImage{border-radius:18px;overflow:hidden;margin:8px 0 12px}
+.sectionImage img{display:block;width:100%;height:auto}
+</style>
+</head>
+<body>
+<main>
+<section class="hero"><div>🕷️ SPIDER COACH</div><h1>Dein Training</h1><div class="muted">Calisthenics · Hybrid · Laufen</div></section>
+<div id="nav"></div><div id="app"></div>
+</main>
+
+<script>
+const P={
+"🟢 Mit Ringen":{
+Mo:{t:"Oberkörper",f:"Push & Pull",e:[["Klimmzüge","4×5–10","1–2 Wdh. Reserve"],["Ring Push-ups","4×8–15","sauber und kontrolliert"],["Dips","3×6–12","kein Schwung"],["Ring Rows","3×8–15","Brust zu den Ringen"],["Pike Push-ups","3×6–12","Schulterfokus"],["Ring Face Pulls","3×12–20","kontrolliert"],["Ring Curls","2–3×8–15","langsam ablassen"]]},
+Mi:{t:"Cindy",f:"20 Minuten AMRAP",c:1,e:[["Klimmzüge","5",""],["Push-ups","10",""],["Air Squats","15",""]]},
+Fr:{t:"Ganzkörper",f:"Kraft",e:[["Bulgarian Split Squats","4×8–12 / Bein",""],["Nordic Curls","3×5–10","langsame Exzentrik"],["Klimmzüge","3×5–10",""],["Dips","3×8–12",""],["Ring Push-ups","3×8–15",""],["Pike Push-ups","3×8–12",""],["Hanging Knee Raises","3×10–15",""]]},
+Sa:{t:"Spider-Man Athletik",f:"Optional · 4 Runden",e:[["Push-ups","10",""],["Klimmzüge","5–8",""],["Air Squats","15",""],["Ausfallschritte","8 / Bein",""],["Burpees","8",""],["Mountain Climbers","30 Sek.",""],["Hollow Hold","20–30 Sek.",""]]}},
+"🔵 Ohne Ringe":{
+Mo:{t:"Oberkörper",f:"Bodyweight",e:[["Klimmzüge","4×5–10",""],["Push-ups","4×10–20",""],["Dips","3×6–12",""],["Australian Rows","3×8–15",""],["Pike Push-ups","3×6–12",""],["Diamond Push-ups","3×8–15",""],["Chin-ups","2×6–10",""]]},
+Mi:{t:"Cindy",f:"20 Minuten AMRAP",c:1,e:[["Klimmzüge","5",""],["Push-ups","10",""],["Air Squats","15",""]]},
+Fr:{t:"Ganzkörper",f:"Bodyweight",e:[["Bulgarian Split Squats","4×8–12 / Bein",""],["Nordic Curls","3×5–10",""],["Klimmzüge","3×5–10",""],["Dips","3×8–12",""],["Decline Push-ups","3×8–15","Füße auf Bank"],["Pike Push-ups","3×8–12",""],["Hanging Knee Raises","3×10–15",""]]},
+Sa:{t:"Spider-Man Athletik",f:"Optional · 4 Runden",e:[["Push-ups","10",""],["Klimmzüge","5–8",""],["Air Squats","15",""],["Ausfallschritte","8 / Bein",""],["Burpees","8",""],["Mountain Climbers","30 Sek.",""],["Hollow Hold","20–30 Sek.",""]]}},
+"🟠 Hybrid":{
+Mo:{t:"Oberkörper",f:"Hanteln + Calisthenics",e:[["Klimmzüge","4×5–10",""],["Bankdrücken Langhantel","4×6–10",""],["Langhantelrudern","3×6–10",""],["Dips","3×6–12",""],["KH-Schulterdrücken","3×8–12",""],["Seitheben","3×12–20",""],["KH-Curls","2–3×10–15",""]]},
+Mi:{t:"Cindy",f:"20 Minuten AMRAP",c:1,e:[["Klimmzüge","5",""],["Push-ups","10",""],["Air Squats","15",""]]},
+Fr:{t:"Ganzkörper",f:"Hybrid Kraft",e:[["Rumänisches Kreuzheben","3×6–10","Langhantel"],["Bulgarian Split Squats","3×8–12 / Bein","Kurzhanteln"],["Klimmzüge","3×5–10",""],["Dips","3×8–12",""],["Decline Push-ups","3×8–15","Füße auf Bank"],["KH-Seitheben","3×12–20",""],["Hanging Knee Raises","3×10–15",""]]},
+Sa:{t:"Spider-Man Athletik",f:"Optional · 4 Runden",e:[["Push-ups","10",""],["Klimmzüge","5–8",""],["Air Squats","15",""],["Ausfallschritte","8 / Bein",""],["Burpees","8",""],["Mountain Climbers","30 Sek.",""],["Hollow Hold","20–30 Sek.",""]]}}};
+
+const days={Mo:"Montag",Mi:"Mittwoch",Fr:"Freitag",Sa:"Samstag"};
+const LS="spider-v3-",today=()=>new Date().toISOString().slice(0,10);
+let page="home",plan=Object.keys(P)[0],day="Mo",timer=90,iv=null,rest=parseInt(localStorage.getItem(LS+"rest")||"90");
+
+function st(){return JSON.parse(localStorage.getItem(LS+"state")||'{"sessions":[],"prs":{},"runs":[],"ach":{},"weight":[]}')}
+function ss(s){localStorage.setItem(LS+"state",JSON.stringify(s))}
+function key(){return plan+"|"+day}
+function wd(){return JSON.parse(localStorage.getItem(LS+"w|"+key())||"{}")}
+function sw(d){localStorage.setItem(LS+"w|"+key(),JSON.stringify(d))}
+function streak(){
+  let ds=[...new Set(st().sessions.map(x=>x.date))].sort().reverse(), n=0, base=new Date();
+  base.setHours(0,0,0,0);
+  for(const x of ds){let q=new Date(x);q.setHours(0,0,0,0);let diff=Math.round((base-q)/86400000);
+    if(diff===n)n++; else if(n===0&&diff===1){n=2;base=q}else break;}
+  return n;
+}
+function fmtTime(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function nav(){
+  const items=[["home","🏠","Start"],["training","💪","Training"],["workouts","⚡","Workouts"],["progress","📈","Fortschritt"],["run","🏃","Laufen"],["more","⚙️","Mehr"]];
+  document.getElementById("nav").innerHTML=items.map(x=>`<button class="${page==x[0]?'active':''}" onclick="page='${x[0]}';render()">${x[1]}<br><small>${x[2]}</small></button>`).join("");
+}
+function render(){nav();({home,training,workouts,progress,run,more}[page])()}
+function home(){
+  const s=st(),w=P[plan][day],d=wd(),done=d.done||[];
+  const recent=s.sessions.slice(-3).reverse();
+  document.getElementById("app").innerHTML=`
+  <div class="visualHero"><img alt="Spider Coach Motiv" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDUwMCI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHgyPSIxIiB5MT0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMxMTE4MjciLz48c3RvcCBvZmZzZXQ9Ii41NSIgc3RvcC1jb2xvcj0iIzdmMWQxZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzExMTgyNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI1MDAiIHJ4PSIzNiIgZmlsbD0idXJsKCNnKSIvPgo8cGF0aCBkPSJNMCA4MCBRMzAwIDE4MCA2MDAgODAgVDEyMDAgODAgTTAgNDIwIFEzMDAgMzIwIDYwMCA0MjAgVDEyMDAgNDIwIE0xNjAgMCBRMjYwIDI1MCAxNjAgNTAwIE0xMDQwIDAgUTk0MCAyNTAgMTA0MCA1MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xMiIgc3Ryb2tlLXdpZHRoPSI1Ii8+CjxjaXJjbGUgY3g9IjYwMCIgY3k9IjI0NSIgcj0iMTE1IiBmaWxsPSIjMTExODI3IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIuMjUiIHN0cm9rZS13aWR0aD0iNSIvPgo8cGF0aCBkPSJNNjAwIDE0MCBMNjAwIDM1MCBNNDk1IDE5NSBMNzA1IDI5NSBNNzA1IDE5NSBMNDk1IDI5NSBNNTIwIDEzNSBMNjgwIDM1NSBNNjgwIDEzNSBMNTIwIDM1NSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZS13aWR0aD0iNiIvPgo8cGF0aCBkPSJNNTMwIDIxNSBRNTY1IDE4MCA1OTUgMjE1IEw1OTUgMjc1IFE1NjAgMzEwIDUzMCAyNzUgWiBNNjcwIDIxNSBRNjM1IDE4MCA2MDUgMjE1IEw2MDUgMjc1IFE2NDAgMzEwIDY3MCAyNzUgWiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuOSIvPgo8dGV4dCB4PSI2MDAiIHk9IjQ1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI4MDAiIGxldHRlci1zcGFjaW5nPSI1Ij5TUElERVIgQ09BQ0g8L3RleHQ+Cjwvc3ZnPg=="></div><div class="hero"><div class="badge">🕷️</div><h1>Spider Coach</h1><p>Dein Training. Deine Daten. Dein Fortschritt.</p></div>
+  <div class="card"><div class="muted">Heute · ${days[day]}</div><h2>${w.t}</h2><p class="muted">${plan} · ${w.f}</p><div class="progress"><div class="bar" style="width:${done.length/w.e.length*100}%"></div></div>
+  <button class="big" onclick="page='training';render()">💪 Heutiges Training öffnen</button></div>
+  <div class="grid"><div class="stat"><b>${streak()}</b><br><span class="muted">🔥 Streak</span></div><div class="stat"><b>${s.sessions.length}</b><br><span class="muted">Trainings</span></div><div class="stat"><b>${Object.keys(s.prs).length}</b><br><span class="muted">Bestwerte</span></div></div>
+  <div class="card"><h2>⚡ Schnellstart</h2><button class="big" onclick="start(1200);alert('Cindy gestartet! 20 Minuten.')">▶ Cindy · 20:00</button><button class="big" onclick="page='run';render()">🏃 Lauftraining</button></div>
+  <div class="card"><h2>🗓️ Zuletzt</h2>${recent.length?recent.map(x=>`<div class="stat"><b>${x.date}</b> · ${x.title}<br><span class="muted">${x.plan} · ${x.done}/${x.total} Übungen</span></div>`).join(""):`<p class="muted">Noch kein Training abgeschlossen. Los geht's! 💪</p>`}</div>`;
+}
+function training(){
+  let w=P[plan][day],d=wd(),done=d.done||[],s=st();
+  let h=`<div class="tabs">${Object.keys(P).map(p=>`<button class="${p==plan?'active':''}" onclick="plan='${p}';render()">${p}</button>`).join("")}</div>
+  <div class="tabs">${Object.keys(days).map(x=>`<button class="${x==day?'active':''}" onclick="day='${x}';render()">${days[x]}</button>`).join("")}</div>
+  <div class="card"><h2>${w.t}</h2><div class="muted">${w.f}</div><div class="progress"><div class="bar" style="width:${done.length/w.e.length*100}%"></div></div><div class="small">${done.length}/${w.e.length} Übungen · 🔥 ${streak()} Tage</div>`;
+  w.e.forEach((e,i)=>{
+    let ok=done.includes(i),l=d["l"+i]||["",""],pr=s.prs[key()+"|"+i]||{};
+    h+=`<div class="ex"><div class="exrow"><div style="flex:1"><div class="name">${e[0]}</div><div class="sets">${e[1]}</div>${e[2]?`<div class="tip">💡 ${e[2]}</div>`:""}
+    <div class="inputs"><input inputmode="decimal" type="number" placeholder="Wdh." value="${l[0]}" onchange="saveLog(${i},0,this.value)"><input inputmode="decimal" type="number" step=".5" placeholder="kg" value="${l[1]}" onchange="saveLog(${i},1,this.value)"></div>
+    ${pr.reps||pr.kg?`<div class="small">🏆 Best: ${pr.reps?pr.reps+" Wdh. ":""}${pr.kg?pr.kg+" kg":""}</div>`:""}</div>
+    <button class="check ${ok?'done':''}" onclick="toggle(${i})">${ok?'✓':'○'}</button></div>${ok?`<button class="smallbtn" onclick="start(rest)">⏱️ ${rest}s Pause</button>`:""}</div>`;
+  });
+  h+=`</div><div class="card"><h2>⏱️ Pausentimer</h2><div class="timer" id="timer">${fmtTime(timer)}</div><button onclick="start(60)">60 s</button> <button onclick="start(90)">90 s</button> <button onclick="start(120)">120 s</button></div>
+  <div class="card"><button class="big" onclick="finish()">✅ Training abschließen</button></div>`;
+  document.getElementById("app").innerHTML=h;
+}
+function workouts(){
+ document.getElementById("app").innerHTML=`<div class="sectionImage"><img alt="Spider Coach Workout Motiv" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDUwMCI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHgyPSIxIiB5MT0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMxMTE4MjciLz48c3RvcCBvZmZzZXQ9Ii41NSIgc3RvcC1jb2xvcj0iIzdmMWQxZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzExMTgyNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI1MDAiIHJ4PSIzNiIgZmlsbD0idXJsKCNnKSIvPgo8cGF0aCBkPSJNMCA4MCBRMzAwIDE4MCA2MDAgODAgVDEyMDAgODAgTTAgNDIwIFEzMDAgMzIwIDYwMCA0MjAgVDEyMDAgNDIwIE0xNjAgMCBRMjYwIDI1MCAxNjAgNTAwIE0xMDQwIDAgUTk0MCAyNTAgMTA0MCA1MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xMiIgc3Ryb2tlLXdpZHRoPSI1Ii8+CjxjaXJjbGUgY3g9IjYwMCIgY3k9IjI0NSIgcj0iMTE1IiBmaWxsPSIjMTExODI3IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIuMjUiIHN0cm9rZS13aWR0aD0iNSIvPgo8cGF0aCBkPSJNNjAwIDE0MCBMNjAwIDM1MCBNNDk1IDE5NSBMNzA1IDI5NSBNNzA1IDE5NSBMNDk1IDI5NSBNNTIwIDEzNSBMNjgwIDM1NSBNNjgwIDEzNSBMNTIwIDM1NSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZS13aWR0aD0iNiIvPgo8cGF0aCBkPSJNNTMwIDIxNSBRNTY1IDE4MCA1OTUgMjE1IEw1OTUgMjc1IFE1NjAgMzEwIDUzMCAyNzUgWiBNNjcwIDIxNSBRNjM1IDE4MCA2MDUgMjE1IEw2MDUgMjc1IFE2NDAgMzEwIDY3MCAyNzUgWiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuOSIvPgo8dGV4dCB4PSI2MDAiIHk9IjQ1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI4MDAiIGxldHRlci1zcGFjaW5nPSI1Ij5TUElERVIgQ09BQ0g8L3RleHQ+Cjwvc3ZnPg=="></div><div class="card"><h2>⚡ Workouts</h2><p class="muted">Direkt starten – ohne erst den Wochenplan zu suchen.</p>
+ <button class="big" onclick="start(1200);alert('Cindy: 5 Klimmzüge · 10 Push-ups · 15 Air Squats · 20 Minuten.')">🔥 Cindy · 20 Minuten</button>
+ <div class="stat"><b>Spider-Man Athletik</b><br><span class="muted">4 Runden: 10 Push-ups · 5–8 Klimmzüge · 15 Squats · 8 Ausfallschritte/Bein · 8 Burpees · 30 s Mountain Climbers · 20–30 s Hollow</span></div>
+ <button class="big" onclick="start(900);alert('Spider-Man Timer: 15 Minuten Gesamtzeit. 4 Runden kontrolliert arbeiten.')">🕷️ Spider-Man · 15:00</button>
+ <div class="stat"><b>Hinweis</b><br><span class="muted">Burpees bleiben bewusst niedrig dosiert.</span></div></div>`;
+}
+function saveLog(i,j,v){
+ let d=wd(),a=d["l"+i]||["",""];a[j]=v;d["l"+i]=a;sw(d);
+ let s=st(),k=key()+"|"+i,p=s.prs[k]||{},n=parseFloat(v);
+ if(j==0&&n>+(p.reps||0))p.reps=n;if(j==1&&n>+(p.kg||0))p.kg=n;s.prs[k]=p;ss(s);
+}
+function toggle(i){let d=wd(),a=d.done||[];a.includes(i)?a.splice(a.indexOf(i),1):a.push(i);d.done=a;sw(d);render()}
+function finish(){
+ let d=wd(),done=d.done||[];if(!done.length){alert("Erst mindestens eine Übung abhaken.");return}
+ let s=st(),w=P[plan][day];s.sessions.push({date:today(),time:new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"}),plan,day,title:w.t,done:done.length,total:w.e.length});ss(s);
+ award("first","Erstes Training","Das erste Training abgeschlossen 💪");
+ if(s.sessions.length===5)award("five","5 Trainings","Fünf Trainings geschafft 🔥");
+ if(s.sessions.length===10)award("ten","10 Trainings","Zehn Trainings geschafft 🏆");
+ alert("Training gespeichert! 💪");render();
+}
+function award(id,title,desc){let s=st();if(s.ach[id])return;s.ach[id]={title,desc,date:today()};ss(s)}
+function progress(){
+ let s=st(), maxW=Math.max(1,...s.weight.map(x=>+x.kg||0)), minW=s.weight.length?Math.min(...s.weight.map(x=>+x.kg).filter(Boolean)):0;
+ let hist=s.weight.slice(-12).map(x=>`<div class="stat">${x.date} · <b>${x.kg} kg</b></div>`).join("");
+ let prs=Object.entries(s.prs).filter(([k,v])=>v.reps||v.kg).map(([k,v])=>{let [p,d,i]=k.split("|"),name=P[p]?.[d]?.e?.[i]?.[0]||"Übung";return `<div class="stat"><b>${name}</b><br>${v.reps?v.reps+" Wdh. ":""}${v.kg?v.kg+" kg":""}</div>`}).join("");
+ let ach=Object.values(s.ach).map(x=>`<div class="stat">🏆 <b>${x.title}</b><br><span class="muted">${x.desc}</span></div>`).join("");
+ document.getElementById("app").innerHTML=`<div class="card"><h2>📈 Fortschritt</h2><div class="grid"><div class="stat"><b>${s.sessions.length}</b><br><span class="muted">Trainings</span></div><div class="stat"><b>${streak()}</b><br><span class="muted">Streak 🔥</span></div><div class="stat"><b>${Object.keys(s.prs).length}</b><br><span class="muted">Bestwerte</span></div></div></div>
+ <div class="card"><h2>⚖️ Gewicht</h2><input id="weight" inputmode="decimal" type="number" step=".1" placeholder="z. B. 67.0 kg"><button onclick="saveWeight()">Gewicht speichern</button>${hist?`<div class="small">Letztes: ${s.weight[s.weight.length-1].kg} kg · niedrigstes gespeichert: ${minW||"–"} kg</div>${s.weight.length>=2?`<div class="chart">${weightChart(s.weight)}</div>`:""}:`<p class="muted">Noch keine Gewichtsdaten.</p>`}</div>
+ <div class="card"><h2>🏆 Bestleistungen</h2>${prs||'<p class="muted">Noch keine Bestleistungen.</p>'}</div>
+ <div class="card"><h2>🏅 Achievements</h2>${ach||'<p class="muted">Noch keine Achievements.</p>'}</div>
+ <div class="card"><h2>🗓️ Trainingshistorie</h2>${s.sessions.slice().reverse().slice(0,30).map(x=>`<div class="stat"><b>${x.date}</b> · ${x.title}<br><span class="muted">${x.plan} · ${x.done}/${x.total} Übungen · ${x.time}</span></div>`).join("")||'<p class="muted">Noch keine abgeschlossenen Trainings.</p>'}</div>`;
+}
+function weightChart(a){
+ let vals=a.slice(-10),mn=Math.min(...vals.map(x=>+x.kg)),mx=Math.max(...vals.map(x=>+x.kg)),r=Math.max(0.1,mx-mn);
+ return vals.map(x=>`<div title="${x.date}: ${x.kg} kg" style="height:${18+((+x.kg-mn)/r)*70}px"></div>`).join("");
+}
+function saveWeight(){let n=parseFloat(document.getElementById("weight").value);if(!n)return;let s=st();s.weight.push({date:today(),kg:n});ss(s);award("weight","Gewicht getrackt","Dein erstes Gewicht gespeichert ⚖️");render()}
+function run(){
+ document.getElementById("app").innerHTML=`<div class="sectionImage"><img alt="Spider Coach Lauf Motiv" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDUwMCI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHgyPSIxIiB5MT0iMCIgeTI9IjEiPjxzdG9wIHN0b3AtY29sb3I9IiMxMTE4MjciLz48c3RvcCBvZmZzZXQ9Ii41NSIgc3RvcC1jb2xvcj0iIzdmMWQxZCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzExMTgyNyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI1MDAiIHJ4PSIzNiIgZmlsbD0idXJsKCNnKSIvPgo8cGF0aCBkPSJNMCA4MCBRMzAwIDE4MCA2MDAgODAgVDEyMDAgODAgTTAgNDIwIFEzMDAgMzIwIDYwMCA0MjAgVDEyMDAgNDIwIE0xNjAgMCBRMjYwIDI1MCAxNjAgNTAwIE0xMDQwIDAgUTk0MCAyNTAgMTA0MCA1MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xMiIgc3Ryb2tlLXdpZHRoPSI1Ii8+CjxjaXJjbGUgY3g9IjYwMCIgY3k9IjI0NSIgcj0iMTE1IiBmaWxsPSIjMTExODI3IiBzdHJva2U9IiNmZmYiIHN0cm9rZS1vcGFjaXR5PSIuMjUiIHN0cm9rZS13aWR0aD0iNSIvPgo8cGF0aCBkPSJNNjAwIDE0MCBMNjAwIDM1MCBNNDk1IDE5NSBMNzA1IDI5NSBNNzA1IDE5NSBMNDk1IDI5NSBNNTIwIDEzNSBMNjgwIDM1NSBNNjgwIDEzNSBMNTIwIDM1NSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utb3BhY2l0eT0iLjUiIHN0cm9rZS13aWR0aD0iNiIvPgo8cGF0aCBkPSJNNTMwIDIxNSBRNTY1IDE4MCA1OTUgMjE1IEw1OTUgMjc1IFE1NjAgMzEwIDUzMCAyNzUgWiBNNjcwIDIxNSBRNjM1IDE4MCA2MDUgMjE1IEw2MDUgMjc1IFE2NDAgMzEwIDY3MCAyNzUgWiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIuOSIvPgo8dGV4dCB4PSI2MDAiIHk9IjQ1MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI2ZmZiIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI4MDAiIGxldHRlci1zcGFjaW5nPSI1Ij5TUElERVIgQ09BQ0g8L3RleHQ+Cjwvc3ZnPg=="></div><div class="card"><h2>🏃 Lauf-Coach</h2>
+ <p class="muted">Progressiver Lauf-/Geh-Einstieg. Wenn dein Knie wieder schmerzt, nicht durchlaufen.</p>
+ <div class="tabs"><button id="r1" class="active" onclick="setRunPlan(1)">Einsteiger</button><button id="r2" onclick="setRunPlan(2)">Aufbau</button><button id="r3" onclick="setRunPlan(3)">Locker</button></div>
+ <div id="runPlan"></div><div class="timer" id="timer">${fmtTime(timer)}</div>
+ <button class="big" onclick="runInterval()">▶ Training starten</button>
+ <button onclick="start(120)">2:00 Joggen</button> <button onclick="start(60)">1:00 Gehen</button></div>
+ <div class="card"><h2>🦵 Knie-Kraft</h2><p class="muted">2× pro Woche, kontrolliert und nur schmerzarm.</p>
+ <div class="stat"><b>Step-down</b> · 2×8 / Bein</div><div class="stat"><b>Glute Bridge</b> · 3×12</div><div class="stat"><b>Wadenheben</b> · 3×15</div><div class="stat"><b>Wall Sit</b> · 3×20–30 s</div></div>
+ <div class="card"><h2>📝 Lauf dokumentieren</h2><button onclick="logRun()">➕ Lauf speichern</button><div class="small">Dauer und Kniegefühl werden gespeichert.</div></div>
+ <div class="card"><h2>📊 Laufhistorie</h2>${st().runs.slice().reverse().slice(0,10).map(x=>`<div class="stat">${x.date} · <b>${x.minutes} min</b> · ${x.note||"Intervall"}</div>`).join("")||'<p class="muted">Noch keine Läufe gespeichert.</p>'}</div>`;
+ setRunPlan(1);
+}
+function setRunPlan(n){
+ const p={1:{title:"Einsteiger",j:120,g:60,rounds:8,total:"24 min",desc:"2:00 Joggen · 1:00 Gehen · 8 Intervalle"},2:{title:"Aufbau",j:150,g:60,rounds:8,total:"28 min",desc:"2:30 Joggen · 1:00 Gehen · 8 Intervalle"},3:{title:"Locker",j:90,g:90,rounds:8,total:"24 min",desc:"1:30 Joggen · 1:30 Gehen · 8 Intervalle"}}[n];
+ window.currentRunPlan=p;
+ for(let i=1;i<=3;i++){let e=document.getElementById("r"+i);if(e)e.className=i===n?"active":""}
+ let e=document.getElementById("runPlan");if(e)e.innerHTML=`<div class="stat"><b>${p.title}</b><br><span class="muted">${p.desc}</span><br><span class="small">Gesamtdauer: ca. ${p.total}</span></div>`;
+}
+function runInterval(){
+ clearInterval(iv);const p=window.currentRunPlan||{j:120,g:60,rounds:8};let phase="jog",left=p.rounds*2;timer=p.j;show();
+ iv=setInterval(()=>{timer--;show();if(timer<=0){if(phase==="jog"){phase="walk";timer=p.g}else{left--;if(left<=0){clearInterval(iv);navigator.vibrate?.([300,100,300]);alert("Lauftraining beendet! 🏃");return}phase="jog";timer=p.j}show()}},1000);
+}
+function logRun(){
+ let s=st(),n=prompt("Wie viele Minuten bist du gelaufen/gegangen?","24");if(!n)return;
+ let note=prompt("Wie war dein Knie?","schmerzfrei");s.runs.push({date:today(),minutes:n,note:note||"nicht angegeben"});ss(s);award("run","Erster Lauf","Ersten Lauf gespeichert 🏃");render();
+}
+function more(){
+ document.getElementById("app").innerHTML=`<div class="card"><h2>⚙️ Einstellungen</h2><div class="stat"><b>Standard-Pause</b><br><button onclick="setRest(60)">60 s</button> <button onclick="setRest(90)">90 s</button> <button onclick="setRest(120)">120 s</button><div class="small">Aktuell: ${rest} s</div></div>
+ <div class="stat"><b>💾 Backup</b><br><button onclick="exportData()">Daten exportieren</button><button onclick="importData()">Daten importieren</button><p class="small">Export ist eine JSON-Datei. Damit kannst du deine Trainingsdaten sichern.</p></div>
+ <div class="stat"><b>📱 Installation</b><br><span class="muted">Safari → Teilen → „Zum Home-Bildschirm“. Dann fühlt sich Spider Coach wie eine kleine App an.</span></div>
+ <button class="danger" onclick="if(confirm('Alle Spider-Coach-Daten löschen?')){Object.keys(localStorage).filter(x=>x.startsWith('spider-v3-')).forEach(x=>localStorage.removeItem(x));location.reload()}">Alle V3-Daten löschen</button></div>`;
+}
+function setRest(x){rest=x;localStorage.setItem(LS+"rest",x);render()}
+function exportData(){
+ let blob=new Blob([JSON.stringify(st(),null,2)],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");a.href=u;a.download="spider-coach-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)
+}
+function importData(){
+ let i=document.createElement("input");i.type="file";i.accept=".json,application/json";i.onchange=()=>{let f=i.files[0],r=new FileReader();r.onload=()=>{try{ss(JSON.parse(r.result));alert("Backup importiert!");render()}catch(e){alert("Backup konnte nicht gelesen werden.")}};r.readAsText(f)};i.click()
+}
+function start(s){clearInterval(iv);timer=s;show();iv=setInterval(()=>{timer--;show();if(timer<=0){clearInterval(iv);navigator.vibrate?.([250,100,250]);alert("Zeit vorbei! 💪")}},1000)}
+function show(){let e=document.getElementById("timer");if(e)e.textContent=fmtTime(timer)}
+render();
+</script>
+</body></html>
